@@ -29,10 +29,6 @@ class Client {
     nlohmann::json CancelOffer();
 
    private:
-    template <typename Int, typename InputPredicate>
-    static auto SafeIntInput(Int& var, InputPredicate input_predicate,
-                             const std::string& error_message);
-
     static void PrintBalance(const nlohmann::json& balance_json);
 
     static void PrintActiveOffers(const nlohmann::json& active_offers_json);
@@ -54,8 +50,8 @@ class Client {
 };
 
 template <typename Int, typename InputPredicate>
-auto Client::SafeIntInput(Int& var, InputPredicate input_predicate,
-                          const std::string& error_message) {
+auto SafeIntInput(Int& var, InputPredicate input_predicate,
+                  const std::string& error_message) {
     while ((std::cout << "> ") &&
            (!(std::cin >> var) || !input_predicate(var))) {
         std::cout << error_message << std::endl;

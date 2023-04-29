@@ -10,6 +10,7 @@
 
 #include "common.h"
 #include "json.h"
+#include "request_handler.h"
 
 using namespace boost::asio;
 using nlohmann::json;
