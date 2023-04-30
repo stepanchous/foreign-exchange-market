@@ -31,7 +31,11 @@ void Session::HandleRead(const boost::system::error_code& error,
         auto request_type = request[json_field::TYPE];
         std::string reply;
         if (request_type == requests::REGISTRATION) {
-            reply = GetSerializer().RegisterUser(request[json_field::USERNAME]);
+            reply = GetSerializer().RegisterUser(request[json_field::USERNAME],
+                                                 request[json_field::PW_HASH]);
+        } else if (request_type == requests::LOGIN) {
+            reply = GetSerializer().Login(request[json_field::USERNAME],
+                                          request[json_field::PW_HASH]);
         } else if (request_type == requests::BALANCE) {
             reply = GetSerializer().GetBalance(request[json_field::USER_ID]);
         } else if (request_type == requests::ACTIVE_OFFERS) {

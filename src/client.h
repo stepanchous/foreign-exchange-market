@@ -7,23 +7,37 @@
 #include <limits>
 #include <string>
 
+// Class that provides client front end for users
+// communication with server
 class Client {
    public:
     Client(boost::asio::ip::tcp::socket&& socket);
 
    private:
+    struct AuthInfo {
+        std::string username;
+        std::string password;
+    };
+
+    void ProcessAuthentication();
+
     void Register();
 
-    std::uint64_t ReadRegistrationResponse();
+    void Login();
+
+    std::optional<uint64_t> ReadAuthResponse();
 
     void Poll();
 
+    AuthInfo GetAuthInfo();
+
    private:
     uint64_t id_;
-    std::string username_;
     boost::asio::ip::tcp::socket socket_;
 };
 
+// Safe int input function that checks input
+// against provided predicate
 template <typename Int, typename InputPredicate>
 auto SafeIntInput(Int& var, InputPredicate input_predicate,
                   const std::string& error_message) {

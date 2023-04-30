@@ -4,7 +4,9 @@
 #include <cstdint>
 #include <stdexcept>
 
+#ifndef TEST
 #include "db_manager.h"
+#endif  // !TEST
 
 Offer::Offer(uint64_t owner_id, OfferType type, int price, size_t amount)
     : id_(GenerateId()),
@@ -13,7 +15,9 @@ Offer::Offer(uint64_t owner_id, OfferType type, int price, size_t amount)
       price_(price),
       amount_(amount),
       status_(OfferStatus::ACTIVE) {
+#ifndef TEST
     GetDBManager().AddOffer(id_, owner_id_, type_, amount_, price_);
+#endif  // !TEST
 }
 
 Deal Offer::MakeDeal(Offer& other) {

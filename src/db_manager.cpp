@@ -1,9 +1,12 @@
 #include "db_manager.h"
 
+#include <cstdint>
 #include <format>
 #include <iostream>
+#include <optional>
 #include <stdexcept>
 
+#include "logger.h"
 #include "offer.h"
 
 DBManager::DBManager(std::ostream& log_output) : logger_(log_output) {
@@ -19,9 +22,7 @@ DBManager::DBManager(std::ostream& log_output) : logger_(log_output) {
         "  CREATE TABLE IF NOT EXISTS User("
         "  ID        INT PRIMARY KEY NOT NULL,"
         "  USERNAME  TEXT NOT NULL,"
-        "  PW_HASH   VARCHAR(64) NOT NULL,"
-        "  USD       INT NOT NULL,"
-        "  RUB       INT NOT NULL"
+        "  PW_HASH   INT NOT NULL"
         ");";
 
     std::string create_deal_query =
@@ -81,6 +82,21 @@ void DBManager::AddDeal(uint64_t deal_id, uint64_t seller_id, uint64_t buyer_id,
     }
 }
 
+void DBManager::AddUser(uint64_t user_id, const std::string& username,
+                        size_t pw_hash) {
+    std::string query = std::format("INSERT INTO User VALUES({}, \"{}\", {});",
+                                    user_id, username, pw_hash);
+    int db_error = sqlite3_exec(db_, query.c_str(), NULL, NULL, NULL);
+    if (db_error) {
+        logger_.Log(
+            LogType::WARNING,
+            std::format("Failed to add user with id {} to db", user_id));
+    } else {
+        logger_.Log(LogType::INFO,
+                    std::format("User with id {} was added to db", user_id));
+    }
+}
+
 int DBManager::GetMaxId(const std::string& table) {
     int id = -1;
     std::string query = std::format("SELECT MAX(ID) FROM {};", table);
@@ -106,6 +122,62 @@ int DBManager::GetMaxIdCallback(void* id, int, char** data, char**) {
     *max_id = std::stoi(data[0]);
 
     return 0;
+}
+
+int DBManager::UsernameExistCallback(void* exist, int, char** data, char**) {
+    int* exist_ = (int*)exist;
+    *exist_ = std::stoi(data[0]);
+
+    return 0;
+}
+
+bool DBManager::UsernameExist(const std::string& username) {
+    std::string query = std::format(
+        "SELECT EXISTS(SELECT 1 FROM User WHERE USERNAME=\"{}\" LIMIT 1);",
+        username);
+    std::cout << query << std::endl;
+
+    int exist;
+    int db_error =
+        sqlite3_exec(db_, query.c_str(), UsernameExistCallback, &exist, NULL);
+    if (db_error) {
+        logger_.Log(LogType::WARNING, "Could not find out if username exist");
+    } else {
+        logger_.Log(LogType::INFO, "Found out if username exist");
+    }
+
+    return exist;
+}
+
+int DBManager::GetUserIdCallback(void* id, int, char** data, char**) {
+    if (data == nullptr || data[0] == nullptr) {
+        return 0;
+    }
+    int* user_id = (int*)id;
+    *user_id = std::stoi(data[0]);
+
+    return 0;
+}
+
+std::optional<uint64_t> DBManager::GetUserId(const std::string& username,
+                                             size_t pw_hash) {
+    std::string query = std::format(
+        "SELECT * FROM User WHERE (USERNAME = \"{}\" AND PW_HASH = {}) LIMIT "
+        "1;",
+        username, pw_hash);
+
+    int user_id = -1;
+    int db_error =
+        sqlite3_exec(db_, query.c_str(), GetUserIdCallback, &user_id, NULL);
+    if (db_error) {
+        logger_.Log(LogType::WARNING,
+                    "Unable to find user with given username and password");
+    } else {
+        logger_.Log(LogType::INFO,
+                    "User with given username and password was found");
+    }
+
+    return user_id == -1 ? std::nullopt : std::optional<uint64_t>(user_id);
 }
 
 DBManager::~DBManager() { sqlite3_close(db_); }

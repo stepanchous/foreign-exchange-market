@@ -5,7 +5,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "db_manager.h"
 #include "offer.h"
 #include "user_data.h"
 
@@ -28,7 +27,8 @@ bool operator<(const OfferQueue& lhs, int rhs);
 
 class Market {
    public:
-    uint64_t RegisterUser(const std::string& username);
+    std::optional<uint64_t> RegisterUser(const std::string& username,
+                                         size_t pw_hash);
 
     void DepositUSD(uint64_t user_id, size_t usd_amount);
 
@@ -65,16 +65,12 @@ class Market {
 
     std::optional<int> DetermineQuote(OfferType offer_type);
 
-    static uint64_t GenerateUserId();
-
    private:
     std::unordered_map<uint64_t, UserData> user_id_to_user_data_;
 
     std::set<OfferQueue, std::less<>> active_sell_offers_;
     std::set<OfferQueue, std::less<>> active_buy_offers_;
     std::optional<int> quote_;
-
-    static inline uint64_t user_id_ = 0;
 };
 
 template <typename BorderPricePredicate, typename GetBestOffers>

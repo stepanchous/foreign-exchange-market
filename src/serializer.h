@@ -6,17 +6,11 @@
 #include "market.h"
 #include "offer.h"
 
-static inline const std::string BUY_STR = "BUY";
-static inline const std::string SELL_STR = "SELL";
-static inline const std::string ID_FIELD = "ID";
-static inline const std::string PRICE_FIELD = "PRICE";
-static inline const std::string AMOUNT_FIELD = "AMOUNT";
-static inline const std::string USD_STR = "USD";
-static inline const std::string RUB_STR = "RUB";
-
 class Serializer {
    public:
-    std::string RegisterUser(const std::string& username);
+    std::string RegisterUser(const std::string& username, size_t pw_hash);
+
+    std::string Login(const std::string& username, size_t pw_hash);
 
     std::string GetActiveOffers(uint64_t user_id) const;
 

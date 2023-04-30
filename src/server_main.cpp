@@ -6,9 +6,11 @@
 #include "db_manager.h"
 #include "offer.h"
 #include "server.h"
+#include "user_data.h"
 
 std::atomic<uint64_t> Offer::offer_id_ = GetDBManager().GetMaxId("Offer");
 std::atomic<uint64_t> Deal::deal_id_ = GetDBManager().GetMaxId("Deal");
+std::atomic<uint64_t> UserData::user_id_ = GetDBManager().GetMaxId("User");
 
 boost::asio::io_service io_service;
 

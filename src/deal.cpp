@@ -2,7 +2,9 @@
 
 #include <cstdint>
 
+#ifndef TEST
 #include "db_manager.h"
+#endif  // !TEST
 
 Deal::Deal(uint64_t seller_id, uint64_t buyer_id, int price, size_t amount)
     : id_(GenerateId()),
@@ -10,7 +12,9 @@ Deal::Deal(uint64_t seller_id, uint64_t buyer_id, int price, size_t amount)
       buyer_id_(buyer_id),
       price_(price),
       amount_(amount) {
+#ifndef TEST
     GetDBManager().AddDeal(id_, seller_id_, buyer_id_, amount, price);
+#endif  // !TEST
 }
 
 uint64_t Deal::GetId() const { return id_; }

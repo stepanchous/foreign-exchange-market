@@ -4,14 +4,21 @@
 #include <memory>
 #include <string>
 
-UserData::UserData(const std::string& username)
-    : username_(username), balance_({.usd = 0, .rub = 0}) {}
+#ifndef TEST
+#include "db_manager.h"
+#endif  // !TEST
+
+UserData::UserData(const std::string& username, size_t pw_hash)
+    : id_(GenerateId()), username_(username), balance_({.usd = 0, .rub = 0}) {
+#ifndef TEST
+    GetDBManager().AddUser(id_, username_, pw_hash);
+#endif  // !TEST
+}
 
 void UserData::AddOffer(const std::shared_ptr<Offer>& offer) {
     active_offers_.insert(offer);
 }
 
-// TODO: Add support of SELL-BUY deal
 void UserData::AddDeal(const std::shared_ptr<Deal>& deal) {
     closed_deals_.insert(deal);
 }
@@ -25,6 +32,8 @@ bool UserData::RemoveActiveOffer(uint64_t offer_id) {
 
     return true;
 }
+
+uint64_t UserData::GetId() const { return id_; }
 
 Balance UserData::GetBalance() const { return balance_; }
 
@@ -52,4 +61,25 @@ void UserData::WithdrawUSD(size_t withdraw_amount) {
 
 void UserData::WithdrawRUB(size_t withdraw_amount) {
     balance_.rub -= withdraw_amount;
+}
+
+uint64_t UserData::GenerateId() { return user_id_++; }
+
+size_t UserDataHasher::operator()(const UserData& user_data) {
+    return hash_type{}(user_data.GetId());
+}
+
+size_t UserDataHasher::operator()(uint64_t user_id) {
+    return hash_type{}(user_id);
+}
+
+std::optional<UserData> CreateUser(const std::string& username,
+                                   size_t pw_hash) {
+#ifndef TEST
+    if (GetDBManager().UsernameExist(username)) {
+        return std::nullopt;
+    }
+#endif  // !TEST
+
+    return UserData(username, pw_hash);
 }

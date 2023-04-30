@@ -7,6 +7,7 @@
 
 #include "deal.h"
 #include "offer.h"
+#include "user_data.h"
 
 bool operator<(const OfferQueue& lhs, const OfferQueue& rhs) {
     return lhs.price < rhs.price;
@@ -14,9 +15,17 @@ bool operator<(const OfferQueue& lhs, const OfferQueue& rhs) {
 bool operator<(int lhs, const OfferQueue& rhs) { return lhs < rhs.price; }
 bool operator<(const OfferQueue& lhs, int rhs) { return lhs.price < rhs; }
 
-uint64_t Market::RegisterUser(const std::string& username) {
-    auto user_id = GenerateUserId();
-    user_id_to_user_data_.insert({user_id, UserData(username)});
+std::optional<uint64_t> Market::RegisterUser(const std::string& username,
+                                             size_t pw_hash) {
+    auto user_data = CreateUser(username, pw_hash);
+    std::optional<uint64_t> user_id =
+        user_data.has_value() ? std::optional<uint64_t>(user_data->GetId())
+                              : std::nullopt;
+
+    if (user_id) {
+        user_id_to_user_data_.insert({*user_id, std::move(*user_data)});
+    }
+
     return user_id;
 }
 
@@ -145,5 +154,3 @@ std::optional<int> Market::DetermineQuote(OfferType offer_type) {
 
     return quote;
 }
-
-uint64_t Market::GenerateUserId() { return user_id_++; }

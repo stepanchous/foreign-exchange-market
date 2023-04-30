@@ -4,6 +4,7 @@
 
 static short port = 5555;
 
+// Request types
 namespace requests {
 
 static inline const std::string REGISTRATION = "Reg";
@@ -14,10 +15,12 @@ static inline const std::string REG_CONFIRMATION = "RegConf";
 static inline const std::string POST_OFFER = "PostOffer";
 static inline const std::string QUOTES = "Quotes";
 static inline const std::string CANCEL = "Cancel";
+static inline const std::string LOGIN = "Log";
 
 }  // namespace requests
 // namespace requests
 
+// Fields of json that is sent to sockets
 namespace json_field {
 
 static inline const std::string TYPE = "TYPE";
@@ -37,5 +40,6 @@ static inline const std::string QUOTE = "QUOTE";
 static inline const std::string ASK_QUOTE = "ASK_QUOTE";
 static inline const std::string BID_QUOTE = "BID_QUOTE";
 static inline const std::string SPREAD = "SPREAD";
+static inline const std::string PW_HASH = "PW_HASH";
 
 }  // namespace json_field

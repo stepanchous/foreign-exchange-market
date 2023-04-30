@@ -4,18 +4,39 @@
 #include <string>
 
 #include "common.h"
+#include "db_manager.h"
 #include "json.h"
 #include "user_data.h"
 
 using nlohmann::json;
 
-std::string Serializer::RegisterUser(const std::string& username) {
+std::string Serializer::RegisterUser(const std::string& username,
+                                     size_t pw_hash) {
     json registration_confirmation;
-    uint64_t user_id = market_.RegisterUser(username);
+    auto user_id = market_.RegisterUser(username, pw_hash);
     registration_confirmation[json_field::TYPE] = requests::REG_CONFIRMATION;
-    registration_confirmation[json_field::SUCCESS] = true;
-    registration_confirmation[json_field::USER_ID] = user_id;
+    registration_confirmation[json_field::SUCCESS] = user_id.has_value();
+    if (user_id.has_value()) {
+        registration_confirmation[json_field::USER_ID] = *user_id;
+    } else {
+        registration_confirmation[json_field::USER_ID] = nullptr;
+    }
+
     return registration_confirmation.dump();
+}
+
+std::string Serializer::Login(const std::string& username, size_t pw_hash) {
+    json response;
+    auto user_id = GetDBManager().GetUserId(username, pw_hash);
+    response[json_field::TYPE] = requests::LOGIN;
+    response[json_field::SUCCESS] = user_id.has_value();
+    if (user_id.has_value()) {
+        response[json_field::USER_ID] = *user_id;
+    } else {
+        response[json_field::USER_ID] = nullptr;
+    }
+
+    return response.dump();
 }
 
 std::string Serializer::GetActiveOffers(uint64_t user_id) const {
