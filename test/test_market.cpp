@@ -1,9 +1,9 @@
-#include <cstdint>
-#include <optional>
 #define CATCH_CONFIG_MAIN
 
 #include <boost/uuid/uuid.hpp>
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
+#include <cstdint>
+#include <optional>
 #include <set>
 
 #include "../src/market.h"
