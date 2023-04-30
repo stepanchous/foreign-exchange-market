@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "db_manager.h"
 #include "offer.h"
 #include "user_data.h"
 

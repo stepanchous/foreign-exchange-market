@@ -47,7 +47,7 @@ class Offer {
     size_t amount_;
     OfferStatus status_;
 
-    static inline std::atomic<uint64_t> offer_id_ = 0;
+    static std::atomic<uint64_t> offer_id_;
 };
 
 bool operator<(const std::shared_ptr<Offer>& lhs,

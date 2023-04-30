@@ -2,12 +2,16 @@
 
 #include <cstdint>
 
+#include "db_manager.h"
+
 Deal::Deal(uint64_t seller_id, uint64_t buyer_id, int price, size_t amount)
     : id_(GenerateId()),
       seller_id_(seller_id),
       buyer_id_(buyer_id),
       price_(price),
-      amount_(amount) {}
+      amount_(amount) {
+    GetDBManager().AddDeal(id_, seller_id_, buyer_id_, amount, price);
+}
 
 uint64_t Deal::GetId() const { return id_; }
 

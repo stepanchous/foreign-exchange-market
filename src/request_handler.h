@@ -14,6 +14,9 @@ enum RequestType {
     GET_BALANCE = 4,
     GET_ACTIVE = 5,
     GET_CLOSED = 6,
+
+    FIRST = POST_OFFER,
+    LAST = GET_CLOSED,
 };
 
 class RequestHandler {
@@ -23,12 +26,12 @@ class RequestHandler {
 
     void Handle();
 
-    virtual ~RequestHandler();
+    virtual ~RequestHandler() = default;
 
    protected:
     virtual nlohmann::json SendRequest() = 0;
 
-    virtual void PrintResult(const nlohmann::json& response);
+    virtual void PrintResult(const nlohmann::json& response) = 0;
 
     nlohmann::json ReadResponse();
 
@@ -42,7 +45,7 @@ class IdOnlyRequestHandler : public RequestHandler {
    public:
     using RequestHandler::RequestHandler;
 
-    virtual ~IdOnlyRequestHandler();
+    virtual ~IdOnlyRequestHandler() = default;
 
    private:
     nlohmann::json SendRequest() override;
@@ -52,10 +55,10 @@ class WithPrerequisitesRequestHandler : public RequestHandler {
    public:
     using RequestHandler::RequestHandler;
 
-    virtual ~WithPrerequisitesRequestHandler();
+    virtual ~WithPrerequisitesRequestHandler() = default;
 
    protected:
-    virtual void GatherPrerequisites();
+    virtual void GatherPrerequisites() = 0;
 };
 
 class GetQuotesHandler final : public IdOnlyRequestHandler {

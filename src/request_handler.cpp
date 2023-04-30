@@ -212,8 +212,8 @@ std::unique_ptr<RequestHandler> MakeRequest(RequestType type,
                 socket, requests::CANCEL, user_id);
 
         case RequestType::GET_QUOTES:
-            return std::make_unique<CancleOfferRequest>(
-                socket, requests::QUOTES, user_id);
+            return std::make_unique<GetQuotesHandler>(socket, requests::QUOTES,
+                                                      user_id);
 
         case RequestType::GET_BALANCE:
             return std::make_unique<GetBalanceRequest>(
@@ -227,4 +227,6 @@ std::unique_ptr<RequestHandler> MakeRequest(RequestType type,
             return std::make_unique<GetClosedDealsRequest>(
                 socket, requests::CLOSED_DEALS, user_id);
     }
+
+    return nullptr;
 }

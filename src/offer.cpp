@@ -4,13 +4,17 @@
 #include <cstdint>
 #include <stdexcept>
 
+#include "db_manager.h"
+
 Offer::Offer(uint64_t owner_id, OfferType type, int price, size_t amount)
     : id_(GenerateId()),
       owner_id_(owner_id),
       type_(type),
       price_(price),
       amount_(amount),
-      status_(OfferStatus::ACTIVE) {}
+      status_(OfferStatus::ACTIVE) {
+    GetDBManager().AddOffer(id_, owner_id_, type_, amount_, price_);
+}
 
 Deal Offer::MakeDeal(Offer& other) {
     if (this->type_ == other.type_) {

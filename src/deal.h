@@ -28,7 +28,7 @@ class Deal {
     int price_;
     size_t amount_;
 
-    static inline std::atomic<uint64_t> deal_id_ = 0;
+    static std::atomic<uint64_t> deal_id_;
 };
 
 bool operator<(const std::shared_ptr<Deal>& lhs,
