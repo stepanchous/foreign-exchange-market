@@ -7,7 +7,7 @@ Foreign exchange market на C++20
 # Требования
 - clang 15.x.x
 - CMake `sudo dnf install cmake`
-- Boost `sudo dnf install boost && sudo dnf install boost-devel`
+- Boost `sudo dnf install boost-devel`
 - SQLite `sudo dnf install sqlite && sudo dnf install sqlite-devel`
 - Catch2 (для тестов)
 ```
