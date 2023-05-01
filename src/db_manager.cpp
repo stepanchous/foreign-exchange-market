@@ -135,7 +135,6 @@ bool DBManager::UsernameExist(const std::string& username) {
     std::string query = std::format(
         "SELECT EXISTS(SELECT 1 FROM User WHERE USERNAME=\"{}\" LIMIT 1);",
         username);
-    std::cout << query << std::endl;
 
     int exist;
     int db_error =
