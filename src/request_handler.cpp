@@ -122,8 +122,20 @@ void GetClosedDealsRequest::PrintResult(const json& response) {
         }
     }
 
+    if (!response.at(json_field::BUY_SELL).empty()) {
+        std::cout << "    Buy-Sell deals:\n";
+        for (const auto& sell_offer : response.at(json_field::BUY_SELL)) {
+            std::cout << "        Amount  : "
+                      << sell_offer.at(json_field::AMOUNT) << '\n';
+            std::cout << "        Price   : "
+                      << sell_offer.at(json_field::PRICE) << '\n'
+                      << std::endl;
+        }
+    }
+
     if (response.at(json_field::BUY).empty() &&
-        response.at(json_field::SELL).empty()) {
+        response.at(json_field::SELL).empty() &&
+        response.at(json_field::BUY_SELL).empty()) {
         std::cout << "You do not have any closed deals." << std::endl;
     }
 }

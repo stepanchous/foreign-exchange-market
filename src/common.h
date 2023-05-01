@@ -29,6 +29,7 @@ static inline const std::string OFFER_ID = "OFFER_ID";
 static inline const std::string DEAL_ID = "DEAL_ID";
 static inline const std::string BUY = "BUY";
 static inline const std::string SELL = "SELL";
+static inline const std::string BUY_SELL = "BUY-SELL";
 static inline const std::string PRICE = "PRICE";
 static inline const std::string AMOUNT = "AMOUNT";
 static inline const std::string SUCCESS = "SUCCESS";

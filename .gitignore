@@ -45,3 +45,4 @@ CTestTestfile.cmake
 _deps
 generated-includes
 
+db/*

@@ -63,7 +63,14 @@ std::string Serializer::GetClosedDeals(uint64_t user_id) const {
     response[json_field::TYPE] = requests::CLOSED_DEALS;
     response[json_field::BUY] = json::array();
     response[json_field::SELL] = json::array();
+    response[json_field::BUY_SELL] = json::array();
     for (const auto& deal : closed_deals) {
+        if (deal->GetBuyer() == deal->GetSeller()) {
+            response[json_field::BUY_SELL].push_back(
+                {{json_field::PRICE, deal->GetPrice()},
+                 {json_field::AMOUNT, deal->GetAmount()}});
+            continue;
+        }
         response[deal->GetBuyer() == user_id ? json_field::BUY
                                              : json_field::SELL]
             .push_back(json({{json_field::PRICE, deal->GetPrice()},
